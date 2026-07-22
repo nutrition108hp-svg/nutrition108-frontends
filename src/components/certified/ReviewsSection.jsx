@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Star, ThumbsUp, BadgeCheck, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -9,8 +9,12 @@ export default function ReviewsSection({ productId }) {
   const [sort, setSort] = useState("helpful");
   const [showForm, setShowForm] = useState(false);
 
-  const load = () => api.reviews(productId, sort).then(setReviews).catch(() => {});
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [productId, sort]);
+  const load = useCallback(() => {
+  return api.reviews(productId, sort).then(setReviews).catch(() => {});
+}, [productId, sort]);
+  useEffect(() => {
+  load();
+}, [load]);
 
   const helpful = async (id) => {
     await api.markHelpful(id);
